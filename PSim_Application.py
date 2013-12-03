@@ -1,5 +1,5 @@
 # This is a generic client or server application.
-# Pass it arguments for "clientType", "sessionName", and "seed".
+# Pass it arguments for "hostType", "sessionName", and "seed".
 
 import sys
 from socket import *
@@ -9,7 +9,7 @@ from texty import *
 # -- Setup --
 
 # Parse command line arguments
-clientType = sys.argv[1]
+hostType = sys.argv[1]
 sessionName = sys.argv[2]
 seed = sys.argv[3]
 print("Arguments OK")
@@ -26,7 +26,7 @@ timeout = 1000
 
 # Build a gateway registration request
 requestTemplate = "@@@RegisterRequest {0} {1}\nthrough {2}\ndelay {3}\nduplicate {4}\njitter {5} {6}\ncorrupt {7} {8}\ntimeout {9}\nseed {10}"
-request = requestTemplate.format(clientType, sessionName, through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout, seed)
+request = requestTemplate.format(hostType, sessionName, through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout, seed)
 
 
 # -- Register with gateway --
@@ -71,10 +71,10 @@ response = hostSocket.recv(1024)
 print("Response:")
 print(tab(response))
 if "@@@Confirmation" in response:
-    if clientType == "client":
+    if hostType == "client":
         print("-- Running client application --")
         runClientApp()
-    elif clientType == "server":
+    elif hostType == "server":
         print("-- Running server application --")
         runServerApp()
 
