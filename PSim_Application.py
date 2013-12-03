@@ -5,6 +5,16 @@ import sys
 from socket import *
 
 
+# -- Function Definitions --
+
+def runClientApp():
+    for i in range (0,5):
+        print("Yay client!")
+
+def runServerApp():
+    for i in range (0,5):
+        print("Yay server!")
+
 # -- Setup --
 
 # Parse command line arguments
@@ -40,12 +50,13 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 
 # Send registration request to gateway
 print("Sending registration request:")
-print(request)
+print("\t{0}".format(request.replace("\n", "\n\t")))
 clientSocket.sendto(request,addr)
 
 # If confirmed, run client or server application
 response = clientSocket.recv(1024)
-print("\nResponse:\n{0}".format(response))
+print("Response:")
+print("\t{0}".format(response.replace("\n", "\n\t")))
 if "@@@Confirmation" in response:
     if clientType == "client":
         print("Running client application...")
@@ -55,11 +66,3 @@ if "@@@Confirmation" in response:
         runServerApp()
 
 clientSocket.close()
-
-def runClientApp():
-    for i in range (0,5):
-        print("Yay client!")
-
-def runServerApp():
-    for i in range (0,5):
-        print("Yay server!")
