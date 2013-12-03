@@ -1,24 +1,15 @@
 # This is a generic client or server application.
-# Pass it arguments for "clientType", "sessionName", and "seed".
+# Pass it arguments for "hostType", "sessionName", and "seed".
 
 import sys
 from socket import *
+from texty import *
 
-
-# -- Function Definitions --
-
-def runClientApp():
-    for i in range (0,5):
-        print("Yay client!")
-
-def runServerApp():
-    for i in range (0,5):
-        print("Yay server!")
 
 # -- Setup --
 
 # Parse command line arguments
-clientType = sys.argv[1]
+hostType = sys.argv[1]
 sessionName = sys.argv[2]
 seed = sys.argv[3]
 print("Arguments OK")
@@ -35,7 +26,7 @@ timeout = 1000
 
 # Build a gateway registration request
 requestTemplate = "@@@RegisterRequest {0} {1}\nthrough {2}\ndelay {3}\nduplicate {4}\njitter {5} {6}\ncorrupt {7} {8}\ntimeout {9}\nseed {10}"
-request = requestTemplate.format(clientType, sessionName, through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout, seed)
+request = requestTemplate.format(hostType, sessionName, through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout, seed)
 
 
 # -- Register with gateway --
@@ -46,23 +37,45 @@ port = 3000
 addr = (host,port)
 
 # Make UDP socket
-clientSocket = socket(AF_INET, SOCK_DGRAM)
+hostSocket = socket(AF_INET, SOCK_DGRAM)
+
+# -- Function Definitions --
+
+def runClientApp():
+    for i in range (0,5):
+        print("Enter request to send to server:")
+        hostSocket.sendto(raw_input("> "), addr)
+        print("Waiting for server response...")
+        serverData = hostSocket.recv(1024)
+        print("Received data from server:")
+        print(tab(serverData))
+    print("Done!")
+
+def runServerApp():
+    for i in range (0,5):
+        print("Listening for client requests...")
+        clientRequest = hostSocket.recv(1024)
+        print("Received request from client:")
+        print(tab(clientRequest))
+        print("Enter data to return to client:")
+        hostSocket.sendto(raw_input("> "), addr)
+    print("Done!")
 
 # Send registration request to gateway
 print("Sending registration request:")
-print("\t{0}".format(request.replace("\n", "\n\t")))
-clientSocket.sendto(request,addr)
+print(tab(request))
+hostSocket.sendto(request,addr)
 
 # If confirmed, run client or server application
-response = clientSocket.recv(1024)
+response = hostSocket.recv(1024)
 print("Response:")
-print("\t{0}".format(response.replace("\n", "\n\t")))
+print(tab(response))
 if "@@@Confirmation" in response:
-    if clientType == "client":
-        print("Running client application...")
+    if hostType == "client":
+        print("-- Running client application --")
         runClientApp()
-    elif clientType == "server":
-        print("Running server application...")
+    elif hostType == "server":
+        print("-- Running server application --")
         runServerApp()
 
-clientSocket.close()
+hostSocket.close()
