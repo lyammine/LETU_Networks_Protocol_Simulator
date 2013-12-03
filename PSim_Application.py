@@ -3,17 +3,8 @@
 
 import sys
 from socket import *
+from texty import *
 
-
-# -- Function Definitions --
-
-def runClientApp():
-    for i in range (0,5):
-        print("Yay client!")
-
-def runServerApp():
-    for i in range (0,5):
-        print("Yay server!")
 
 # -- Setup --
 
@@ -46,23 +37,45 @@ port = 3000
 addr = (host,port)
 
 # Make UDP socket
-clientSocket = socket(AF_INET, SOCK_DGRAM)
+hostSocket = socket(AF_INET, SOCK_DGRAM)
+
+# -- Function Definitions --
+
+def runClientApp():
+    for i in range (0,5):
+        print("Enter request to send to server:")
+        hostSocket.sendto(raw_input("> "), addr)
+        print("Waiting for server response...")
+        serverData = hostSocket.recv(1024)
+        print("Received data from server:")
+        print(tab(serverData))
+    print("Done!")
+
+def runServerApp():
+    for i in range (0,5):
+        print("Listening for client requests...")
+        clientRequest = hostSocket.recv(1024)
+        print("Received request from client:")
+        print(tab(clientRequest))
+        print("Enter data to return to client:")
+        hostSocket.sendto(raw_input("> "), addr)
+    print("Done!")
 
 # Send registration request to gateway
 print("Sending registration request:")
-print("\t{0}".format(request.replace("\n", "\n\t")))
-clientSocket.sendto(request,addr)
+print(tab(request))
+hostSocket.sendto(request,addr)
 
 # If confirmed, run client or server application
-response = clientSocket.recv(1024)
+response = hostSocket.recv(1024)
 print("Response:")
-print("\t{0}".format(response.replace("\n", "\n\t")))
+print(tab(response))
 if "@@@Confirmation" in response:
     if clientType == "client":
-        print("Running client application...")
+        print("-- Running client application --")
         runClientApp()
     elif clientType == "server":
-        print("Running server application...")
+        print("-- Running server application --")
         runServerApp()
 
-clientSocket.close()
+hostSocket.close()

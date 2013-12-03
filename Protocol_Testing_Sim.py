@@ -8,6 +8,7 @@
 # This gateway between client and server simulates packet loss, duplication, corruption, and out-of-order delivery.
 
 from socket import *
+from texty import *
 import datetime
 
 # Table of each session's client, server, and values
@@ -27,7 +28,7 @@ def sendConfirmation(addresses):
 
 def handleRegistration(data, addr):
     print("Registration request from address {0}:".format(addr))
-    print("\t{0}".format(data.replace("\n", "\n\t")))
+    print(tab(data))
     # Extract values from message according to specification
     words = data.split()
     clientType = words[1]
@@ -53,5 +54,7 @@ while True:
     data, addr = gatewaySocket.recvfrom(1024)
     if "@@@RegisterRequest" in data:
         handleRegistration(data, addr)
+    else:
+        print("Received data from unknown source. Ignored.")
 
 gatewaySocket.close()
