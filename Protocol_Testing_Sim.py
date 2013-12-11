@@ -1,6 +1,6 @@
 #Name: Logan Turner & Leila Yammine
 #Course: COSC 3603 Networks & Data Communications
-#Date: 11/20/13
+#Date: 12/10/13
 #Assignment #: Protocol Testing Simulator
 #Program Description: 
 #Development Environment: Python IDLE
@@ -33,6 +33,14 @@ def handleRegistration(data, addr):
     words = data.split()
     hostType = words[1]
     sessionName = words[2]
+    through = words[3]
+    delay = words[4]
+    duplicate = words[5]
+    jitterPercent = words[6]
+    jitterMax = words[7]
+    corruptPackets = words[8]
+    corruptBits = words[9]
+    timeout = words[10]
 
     matchingSession = next((s for s in sessions if s["SessionName"] == sessionName), None)
 
@@ -48,6 +56,13 @@ def handleRegistration(data, addr):
     if (thisSession["ClientAddr"] and thisSession["ServerAddr"]):
         print("Creating confirmation message for session \"{0}\"".format(thisSession["SessionName"]))
         sendConfirmation([thisSession["ClientAddr"], thisSession["ServerAddr"]])
+
+    thread.start_new_thread(manageThread(),through,delay,duplicate,jitterPercent,jitterMax,corruptPackets,corruptBits,timeout)
+
+def manageThread(through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout):
+    
+
+# -- Main Function --
 
 while True:
     print("Listening...")
