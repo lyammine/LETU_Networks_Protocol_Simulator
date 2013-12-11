@@ -10,6 +10,7 @@
 from socket import *
 from texty import *
 import datetime
+import ThreadManager
 
 # Table of each session's client, server, and values
 sessions = []
@@ -41,6 +42,9 @@ def handleRegistration(data, addr):
     corruptPackets = words[8]
     corruptBits = words[9]
     timeout = words[10]
+    
+    parameters = ErrorParameters(through, delay, duplicate, jitterPercent,jitterMax, corruptPackets, corruptBits, timeout)
+
 
     matchingSession = next((s for s in sessions if s["SessionName"] == sessionName), None)
 
@@ -57,9 +61,11 @@ def handleRegistration(data, addr):
         print("Creating confirmation message for session \"{0}\"".format(thisSession["SessionName"]))
         sendConfirmation([thisSession["ClientAddr"], thisSession["ServerAddr"]])
 
-    thread.start_new_thread(manageThread(),through,delay,duplicate,jitterPercent,jitterMax,corruptPackets,corruptBits,timeout)
+    thread.start_new_thread(manageThread(),parameters)
 
-def manageThread(through, delay, duplicate, jitterPercent, jitterMax, corruptPackets, corruptBits, timeout):
+def manageThread(parameters):
+
+    if
     
 
 # -- Main Function --
