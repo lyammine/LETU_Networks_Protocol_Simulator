@@ -65,6 +65,13 @@ def manageThread(through, delay, duplicate, jitterPercent, jitterMax, corruptPac
 # -- Main Function --
 
 while True:
+
+    # Get incoming message
+
+    # Ask all the sessions whose it is
+
+    # If nobody takes it, make a new session for it
+
     print("Listening...")
     data, addr = gatewaySocket.recvfrom(1024)
     if "@@@RegisterRequest" in data:
