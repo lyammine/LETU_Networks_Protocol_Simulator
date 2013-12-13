@@ -1,10 +1,30 @@
 # Session.py
 # Classes for handling individual connection sessions
 
-class session:
+from texty import *
 
-    def __init__(self, sessionName):
+class Session:
+
+    def __init__(self, simulator, sessionName):
+        self.simulator = simulator
         self.name = sessionName
+
+    def readyForData():
+        return self.clientAddress and self.serverAddress
+
+
+    def registerHost(address, isClient, networkParameters):
+        if isClient:
+            self.clientAddress = address
+        else:
+            self.serverAddress = address
+        self.networkParameters = networkParameters
+        if readyForData():
+            simulator.SendConfirmation([clientAddress, serverAddress])
+
+    def forwardData():
+
+
 
     def HandleMessage(sessionName, sourceAddress, message):
 
@@ -14,9 +34,11 @@ class session:
         if sessionName and (sessionName != self.name):
             return false
 
-        # If sessionName is mine, reply that I can take it
-
-        # If sourceAddress belongs to either my client or server, reply that I can take it
+        # If sessionName or sourceAddress is mine, reply that I can take it
+        if (sessionName == self.name) or (sourceAddress == self.clientAddress) or (sourceAddress == self.serverAddress):
+            print("Session \"{0}\" claims this message".format(self.name))
+            # determine message type, send it to the thread
+            return true;
 
 
         # -- Determine what kind of message this is: registration or data --

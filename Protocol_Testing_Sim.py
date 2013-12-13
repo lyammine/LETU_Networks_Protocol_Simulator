@@ -21,11 +21,14 @@ gatewaySocket.bind(gatewayAddress)
 
 # -- Function Definitions --
 
-def sendConfirmation(addresses):
+def SendConfirmation(addresses):
     confirmationMessage = "@@@Confirmation {0}".format(datetime.datetime.now())
     for address in addresses:
         gatewaySocket.sendto(confirmationMessage, address)
         print("Confirmation sent to {0}".format(address))
+
+def SendError(addresses):
+    
 
 def handleRegistration(data, addr):
     print("Registration request from address {0}:".format(addr))
@@ -74,12 +77,14 @@ while True:
 
     # Get incoming message
 
+    print("Listening...")
+    data, addr = gatewaySocket.recvfrom(1024)
+
+    sessionName = parseSessionName(data)
+
     # Ask all the sessions whose it is
 
     # If nobody takes it, make a new session for it
-
-    print("Listening...")
-    data, addr = gatewaySocket.recvfrom(1024)
     if "@@@RegisterRequest" in data:
         handleRegistration(data, addr)
     else:
